@@ -38,6 +38,11 @@ contract DPOS {
         _;
     }
 
+    modifier isValidateOracle(address _address) {
+        require(checkOracle(_address), "Already oracle");
+        _;
+    }
+
     function stayOracle() notOracle(msg.sender) external returns(bool) {
         votes[msg.sender] = Votes(true, 0);
         return true;
@@ -85,5 +90,12 @@ contract DPOS {
         }
 
         return worstId;
+    }
+
+    function checkOracle(address oracle) private view returns(bool) {
+        for (uint i = 0; i < oreclesCount; i++) {
+            if (oracles[i] == oracle) return true;
+        }
+        return false;
     }
 }
