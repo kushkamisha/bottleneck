@@ -18,7 +18,7 @@ contract DPOS is DPOSInterface {
         mapping(address => bool) users;
     }
 
-    mapping (address => bool) public voting;
+    mapping (address => bool) public voted;
     mapping (address => Votes) public votes;
 
     uint8 constant public oraclesCount = 3;
@@ -29,7 +29,7 @@ contract DPOS is DPOSInterface {
     }
 
     modifier notVoted {
-        require(!voting[msg.sender], "You've already voted");
+        require(!voted[msg.sender], "You've already voted");
         _;
     }
 
@@ -66,7 +66,7 @@ contract DPOS is DPOSInterface {
     }
 
     function vote(address candidate) external notVoted isCandidateToOracles(candidate) returns(bool) {
-        voting[msg.sender] = true;
+        voted[msg.sender] = true;
         votes[candidate].count = votes[candidate].count.add(1);
         votes[candidate].users[msg.sender] = true;
 
@@ -77,7 +77,7 @@ contract DPOS is DPOSInterface {
     }
 
     function unvote(address candidate) external isCandidateToOracles(candidate) haveVoted(candidate) returns(bool) {
-        voting[msg.sender] = false;
+        voted[msg.sender] = false;
         votes[candidate].count = votes[candidate].count.sub(1);
         votes[candidate].users[msg.sender] = false;
 
