@@ -10,6 +10,7 @@ interface GameInterface {
 }
 
 contract Game is Platform, GameInterface {
+
     struct Bet {
         address payable wallet;
         uint8 bet;
@@ -100,9 +101,9 @@ contract Game is Platform, GameInterface {
     }
 
     function getOraclesReward(uint totalReward) private returns(bool) {
-        uint oracleRevard = (totalReward / oraclesCount) * mRevardMultiplier / 1000;
+        uint oracleRevard = totalReward.div(oraclesCount).mul(mRevardMultiplier).div(1000);
         for (uint8 i = 0; i < oraclesCount; i++) {
-            oraclesBalance[oracles[i]] += oracleRevard;
+            oraclesBalance[oracles[i]] = oraclesBalance[oracles[i]].add(oracleRevard);
             emit GetOracleReward(oracles[i], oracleRevard);
         }
 
@@ -112,8 +113,9 @@ contract Game is Platform, GameInterface {
     function getPlayersReward(uint actionId, uint8 result) private returns(bool) {
         for (uint8 i = 0; i < actions[actionId].bets.length; i++) {
             if (actions[actionId].bets[i].bet == result) {
-                actions[actionId].bets[i].wallet.transfer(actions[actionId].bets[i].amount * actions[actionId].mCoeficient / 1000);
-                emit GetPlayerReward(actions[actionId].bets[i].wallet, actions[actionId].bets[i].amount * actions[actionId].mCoeficient / 1000);
+                uint winAmount = actions[actionId].bets[i].amount.mul(uint(actions[actionId].mCoeficient).div(1000));
+                actions[actionId].bets[i].wallet.transfer(winAmount);
+                emit GetPlayerReward(actions[actionId].bets[i].wallet, winAmount);
             }
         }
         

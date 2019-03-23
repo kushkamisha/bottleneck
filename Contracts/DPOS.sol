@@ -1,5 +1,7 @@
 pragma solidity 0.5.6;
 
+import "browser/SafeMath.sol";
+
 interface DPOSInterface {
     function becameCandidateToOracles() external returns(bool);
     function vote(address candidate) external returns(bool);
@@ -7,6 +9,8 @@ interface DPOSInterface {
 }
 
 contract DPOS is DPOSInterface {
+
+    using SafeMath for uint;
 
     struct Votes {
         bool initialized;
@@ -63,7 +67,7 @@ contract DPOS is DPOSInterface {
 
     function vote(address candidate) external notVoted isCandidateToOracles(candidate) returns(bool) {
         voting[msg.sender] = true;
-        votes[candidate].count++;
+        votes[candidate].count = votes[candidate].count.add(1);
         votes[candidate].users[msg.sender] = true;
 
         if (!isValidOracle(msg.sender)) updateOreaclesList(candidate);
@@ -74,7 +78,7 @@ contract DPOS is DPOSInterface {
 
     function unvote(address candidate) external isCandidateToOracles(candidate) haveVoted(candidate) returns(bool) {
         voting[msg.sender] = false;
-        votes[candidate].count--;
+        votes[candidate].count = votes[candidate].count.sub(1);
         votes[candidate].users[msg.sender] = false;
 
         updateOreaclesList(candidate);

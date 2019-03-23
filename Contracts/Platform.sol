@@ -15,12 +15,12 @@ contract Platform is PlatformInterface, DPOS {
 
     function withdrawOraclesReward(uint amount) external payable returns(bool) {
         if (oraclesBalance[msg.sender] > amount) {
-            oraclesBalance[msg.sender] -= amount;
+            oraclesBalance[msg.sender] = oraclesBalance[msg.sender].sub(amount);
             msg.sender.transfer(amount);
-            
+
             emit WithdrawOraclesReward(msg.sender, amount);
         }
-        
+
         return true;
     }
 }
