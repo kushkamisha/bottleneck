@@ -2,7 +2,14 @@ pragma solidity 0.5.6;
 
 import "browser/Platform.sol";
 
-contract Game is Platform {
+interface GameInterface {
+    function createAction(uint _timestamp, uint16 _mCoeficient, uint8 _range) external returns(uint256);
+    function submitAction(uint actionId) external returns(bool);
+    function makeBet(uint8 bet, uint actionId) external payable returns(bool);
+    function submitEvent(uint8 result, uint actionId) external returns(bool);
+}
+
+contract Game is Platform, GameInterface {
     struct Bet {
         address payable wallet;
         uint8 bet;
@@ -49,22 +56,33 @@ contract Game is Platform {
         _;
     }
 
+    event CreateAction(uint actionId);
+    event SubmitAction(address oracle, uint actionId);
+    event MakeBet(uint8 bet, address player, uint actionId);
+    event SubmitEvent(uint8 result, address oracle, uint actionId);
+    event GetOracleReward(address oracle, uint amount);
+    event GetPlayerReward(address player, uint amount);
+
     function createAction(uint _timestamp, uint16 _mCoeficient, uint8 _range) external isOracle returns(uint256) {
         actions.push(Action(_timestamp, _mCoeficient, _range, 0, new Bet[](0), 0));
+
+        emit CreateAction(actions.length - 1);
         return (actions.length - 1);
     }
 
     function submitAction(uint actionId) external isOracle notVotedForAction(actionId) returns(bool) {
         actions[actionId].votesForAction++;
         actions[actionId].isVotedForAction[msg.sender] = true;
-        
+
+        emit SubmitAction(msg.sender, actionId);
         return true;
     }
 
     function makeBet(uint8 bet, uint actionId) external payable submitedAction(actionId) isBetInRange() returns(bool) {
         actions[actionId].bets.push(Bet(msg.sender, bet, msg.value));
         getOraclesReward(msg.value);
-        
+
+        emit MakeBet(bet, msg.sender, actionId);
         return true;
     }
 
@@ -73,10 +91,11 @@ contract Game is Platform {
         actions[actionId].results[result]++; 
         
         if (actions[actionId].results[result] >= oraclesCount / 2 + 1) {
-            payForUsers(actionId, actions[actionId].results[result]);
+            getPlayersReward(actionId, actions[actionId].results[result]);
             actions[actionId].result = actions[actionId].results[result];
         }
-        
+
+        emit SubmitEvent(result, msg.sender, actionId);
         return true;
     }
 
@@ -84,19 +103,20 @@ contract Game is Platform {
         uint oracleRevard = (totalReward / oraclesCount) * mRevardMultiplier / 1000;
         for (uint8 i = 0; i < oraclesCount; i++) {
             oraclesBalance[oracles[i]] += oracleRevard;
-            emit GetOraclesReward(oracles[i], oracleRevard);
+            emit GetOracleReward(oracles[i], oracleRevard);
         }
 
         return true;
     }
 
-    function payForUsers(uint actionId, uint8 result) private returns(bool) {
+    function getPlayersReward(uint actionId, uint8 result) private returns(bool) {
         for (uint8 i = 0; i < actions[actionId].bets.length; i++) {
             if (actions[actionId].bets[i].bet == result) {
                 actions[actionId].bets[i].wallet.transfer(actions[actionId].bets[i].amount * actions[actionId].mCoeficient / 1000);
+                emit GetPlayerReward(actions[actionId].bets[i].wallet, actions[actionId].bets[i].amount * actions[actionId].mCoeficient / 1000);
             }
         }
-
+        
         return true;
     }
 }
