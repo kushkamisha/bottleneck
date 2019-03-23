@@ -4,7 +4,7 @@ contract DPOS {
     struct Votes {
         bool initialized;
         uint count;
-        address[] users;
+        mapping(address => bool) users;
     }
 
     mapping (address => bool) public voting;
@@ -12,6 +12,11 @@ contract DPOS {
 
     modifier notVoting(address _address) {
         require(!voting[_address], "Already vote");
+        _;
+    }
+
+    modifier isVoting(address _address) {
+        require(voting[_address], "Already vote");
         _;
     }
 
@@ -26,14 +31,22 @@ contract DPOS {
     }
 
     function stayOracle() notOracle(msg.sender) external returns(bool) {
-        votes[msg.sender] = Votes(true, 0, new address[](0));
+        votes[msg.sender] = Votes(true, 0);
         return true;
     }
 
     function vote(address aspt) notVoting(msg.sender) isOracle(aspt) external returns(bool) {
         voting[msg.sender] = true;
         votes[aspt].count++;
-        votes[aspt].users.push(msg.sender);
+        votes[aspt].users[msg.sender] = true;
+        return true;
+    }
+
+    function unvote(address aspt) isVoting(msg.sender) isOracle(aspt) external returns(bool) {
+        require(votes[aspt].users[msg.sender], "Your are not voting fot this oracle");
+        voting[msg.sender] = false;
+        votes[aspt].count--;
+        votes[aspt].users[msg.sender] = false;
         return true;
     }
 }
