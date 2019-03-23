@@ -1,6 +1,7 @@
 pragma solidity 0.5.6;
 
 contract DPOS {
+
     struct Votes {
         bool initialized;
         uint count;
@@ -10,60 +11,58 @@ contract DPOS {
     mapping (address => bool) public voting;
     mapping (address => Votes) public votes;
 
-    uint public oreclesCount;
+    uint8 constant public oraclesCount = 3;
     address[] public oracles;
 
-    constructor(uint _oreclesCount) public {
-        oreclesCount = _oreclesCount;
-        oracles = new address[](oreclesCount);
+    constructor() public {
+        oracles = new address[](oraclesCount);
     }
 
-    modifier notVoting(address _address) {
-        require(!voting[_address], "Already vote");
+    modifier notVoted {
+        require(!voting[msg.sender], "You've already voted");
         _;
     }
 
-    modifier isVoting(address _address) {
-        require(voting[_address], "Already vote");
+    modifier haveVoted(address candidate) {
+        require(votes[candidate].users[msg.sender], "You've not voted for this candidate");
         _;
     }
 
-    modifier notOracle(address _address) {
-        require(!votes[_address].initialized, "Already oracle");
+    modifier notCandidateToOracles {
+        require(!votes[msg.sender].initialized, "You're already candidate to oracles");
         _;
     }
 
-    modifier isOracle(address _address) {
-        require(votes[_address].initialized, "Already oracle");
+    modifier isCandidateToOracles(address _address) {
+        require(votes[_address].initialized, "You're not candidate to oracles");
         _;
     }
 
-    modifier isValidateOracle {
-        require(checkOracle(msg.sender), "Already oracle");
+    modifier isOracle {
+        require(isValidOracle(msg.sender), "You're not oracle");
         _;
     }
 
-    function stayOracle() notOracle(msg.sender) external returns(bool) {
+    function becameCandidateToOracles() external notCandidateToOracles returns(bool) {
         votes[msg.sender] = Votes(true, 0);
         return true;
     }
 
-    function vote(address aspt) notVoting(msg.sender) isOracle(aspt) external returns(bool) {
+    function vote(address candidate) external notVoted isCandidateToOracles(candidate) returns(bool) {
         voting[msg.sender] = true;
-        votes[aspt].count++;
-        votes[aspt].users[msg.sender] = true;
+        votes[candidate].count++;
+        votes[candidate].users[msg.sender] = true;
 
-        updateOreaclesList(aspt);
+        if (!isValidOracle(msg.sender)) updateOreaclesList(candidate);
         return true;
     }
 
-    function unvote(address aspt) isVoting(msg.sender) isOracle(aspt) external returns(bool) {
-        require(votes[aspt].users[msg.sender], "Your are not voting fot this oracle");
+    function unvote(address candidate) external isCandidateToOracles(candidate) haveVoted(candidate) returns(bool) {
         voting[msg.sender] = false;
-        votes[aspt].count--;
-        votes[aspt].users[msg.sender] = false;
+        votes[candidate].count--;
+        votes[candidate].users[msg.sender] = false;
 
-        updateOreaclesList(aspt);
+        updateOreaclesList(candidate);
         return true;
     }
 
@@ -77,9 +76,10 @@ contract DPOS {
     }
 
     function getWorstOracle() private view returns (uint id) {
-        uint worstResult = 999999999;
         uint worstId = 0;
-        for (uint i = 0; i < oreclesCount; i++) {
+        uint worstResult = votes[oracles[worstId]].count;
+
+        for (uint i = 1; i < oraclesCount; i++) {
             uint oracleVotesCount = votes[oracles[i]].count;
             if (oracleVotesCount == 0) return i;
             
@@ -92,8 +92,8 @@ contract DPOS {
         return worstId;
     }
 
-    function checkOracle(address oracle) private view returns(bool) {
-        for (uint i = 0; i < oreclesCount; i++) {
+    function isValidOracle(address oracle) private view returns(bool) {
+        for (uint i = 0; i < oraclesCount; i++) {
             if (oracles[i] == oracle) return true;
         }
         return false;
