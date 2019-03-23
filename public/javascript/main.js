@@ -45,6 +45,22 @@ function loadContract() {
     window.contractInstance = WellcomeContract.at('0x0013744908750cdd9e30b22e94377909116ab2b4')
 }
 
+$('#oraclesButton').click(function () {
+    const address = $('#oraclesAddress').val()
+    contractInstance.oracles.call(address, (err, oracle) => {
+        if (err) console.error({ err })
+        $('#oraclesResult').text(oracle)
+    })
+})
+
+$('#votingButton').click(function () {
+    const address = $('#votingAddress').val()
+    contractInstance.voting.call(address, (err, voted) => {
+        if (err) console.error({ err })
+        $('#votingResult').text(voted)
+    })
+})
+
 $('#votes').click(function () {
     const address = $('#votesAddress').val()
     contractInstance.votes.call(address, (err, votes) => {
@@ -66,7 +82,7 @@ $('#becomeCandidate').click(function () {
                     .then((event, err) => {
                         if (err) console.error({ err })
                         console.log({ event })
-                        $('#becomeCandidateStatus').text('true')
+                        $('#becomeCandidateStatus').text('success')
                     })
             })
         })
@@ -84,7 +100,25 @@ $('#vote').click(function () {
                     .then((event, err) => {
                         if (err) console.error({ err })
                         console.log({ event })
-                        $('#voteForCandidate').text('true')
+                        $('#voteForCandidate').text('success')
+                    })
+            })
+        })
+})
+
+$('#unvoteButton').click(function () {
+    const forAddress = $('#unvoteAddress').val()
+    getAccount()
+        .then((address, err) => {
+            if (err) console.error({ err })
+            contractInstance.unvote(forAddress, { from: address }, function (err, receipt) {
+                if (err) console.error({ err })
+                // console.log({ receipt })
+                handleEvent('Unvote')
+                    .then((event, err) => {
+                        if (err) console.error({ err })
+                        console.log({ event })
+                        $('#unvoteStatus').text('success')
                     })
             })
         })

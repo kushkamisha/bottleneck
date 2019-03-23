@@ -9,16 +9,54 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <title>Flight Insurance</title>
 </head>
-<body class="container" style="padding-top: 3em">
-    <h1>Global flight insurance</h1>
-    <hr>
-    <h3>oraclesCount()</h3>
+<body style="padding: 3em">
+    <h1 style="padding-bottom: 1em" align="center">Global flight insurance</h1>
+
     <div class="table-responsive">
+
+        <table class="table table-bordered">
+            <tr>
+                <td>
+        <h2 align="center" style="padding: 1em 0"><span class="badge badge-pill badge-success px-5">Getters</span></h2>
+
+        <h3>oraclesCount()</h3>
         <table class="table table-bordered">
             <tbody>
                 <tr>
                     <td>Number of oracles:</td>
                     <td id="oracles"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>oracles()</h3>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>Get oracle by id</td>
+                    <td id="oraclesResult"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="text" id="oraclesAddress" size="5" value="0" />
+                        <span id="oraclesButton" class="btn btn-success">Get oracles</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>voting()</h3>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>Has address voted?</td>
+                    <td id="votingResult"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="text" id="votingAddress" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
+                        <span id="votingButton" class="btn btn-success">Get oracles</span>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -37,11 +75,18 @@
                 <tr>
                     <td colspan="2" align="center">
                         <input type="text" id="votesAddress" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
-                        <a href="#" id="votes" class="btn btn-primary">Check</a>
+                        <span id="votes" class="btn btn-success">Check</span>
                     </td>
                 </tr>
             </tbody>
         </table>
+        
+        </td>
+        <td>
+
+
+
+        <h2 align="center" style="padding: 1em 0"><span class="badge badge-pill badge-primary px-5">Setters</span></h2>
 
         <h3>becomeCandidateToOracles()</h3>
         <table class="table table-bordered">
@@ -52,7 +97,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <a href="#" id="becomeCandidate" class="btn btn-primary">Check</a>
+                        <span id="becomeCandidate" class="btn btn-primary">Check</span>
                     </td>
                 </tr>
             </tbody>
@@ -68,10 +113,29 @@
                 <tr>
                     <td colspan="2">
                         <input type="text" id="voteAddress" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
-                        <a href="#" id="vote" class="btn btn-primary">Vote</a>
+                        <span id="vote" class="btn btn-primary">Vote</span>
                     </td>
                 </tr>
             </tbody>
+        </table>
+
+        <h3>unvote()</h3>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>Remove your vote for candidate</td>
+                    <td id="unvoteStatus"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="text" id="unvoteAddress" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
+                        <span id="unvoteButton" class="btn btn-primary">Vote</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </td>
+        </tr>
         </table>
 
     </div>
