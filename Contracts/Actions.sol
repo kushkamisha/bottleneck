@@ -17,7 +17,8 @@ contract Actions is DPOS {
         address[] users;
     }
 
-    Action[] actions;
+    Action[] public actions;
+    mapping (address => uint256) public oraclesRevards;
 
     modifier submitedActions(uint actionId) {
         require(actions[actionId].submitActionCount >= oreclesCount / 2 + 1, "Not submitted action");
@@ -42,5 +43,20 @@ contract Actions is DPOS {
             revert();
         }
         actions[actionId].users.push(msg.sender);
+        rewardOracles(msg.value);
+    }
+
+    function rewardOracles(uint totalReward) private returns(bool) {
+        uint oracleRevard = totalReward / oreclesCount;
+        for (uint i = 0; i < oreclesCount; i++) {
+            oraclesRevards[oracles[i]] += oracleRevard;
+        }
+    }
+
+    function withdrawReward(uint amount) external payable returns(bool) {
+        if (oraclesRevards[msg.sender] > amount) {
+            oraclesRevards[msg.sender] - amount;
+            msg.sender.transfer(amount);
+        }
     }
 }
