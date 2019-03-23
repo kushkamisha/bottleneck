@@ -24,9 +24,9 @@ contract Actions is DPOS {
         _;
     }
 
-    function createAction(uint _timestamp, uint _coef) isValidateOracle external returns(bool) {
+    function createAction(uint _timestamp, uint _coef) isValidateOracle external returns(uint256) {
         actions.push(Action(_timestamp, 0, 0, _coef, new address[](0)));
-        return true;
+        return (actions.length - 1);
     }
 
     function submitAction(uint actionId) isValidateOracle external returns(bool) {
@@ -35,5 +35,12 @@ contract Actions is DPOS {
         actions[actionId].submitActionCount++;
         actions[actionId].agreements[msg.sender] = true;
         return true;
+    }
+
+    function insurance(uint actionId) submitedActions(actionId) external payable returns(bool) {
+        if (msg.value > 1 ether) {
+            revert();
+        }
+        actions[actionId].users.push(msg.sender);
     }
 }
