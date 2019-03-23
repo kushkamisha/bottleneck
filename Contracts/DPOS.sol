@@ -1,6 +1,12 @@
 pragma solidity 0.5.6;
 
-contract DPOS {
+interface DPOSInterface {
+    function becameCandidateToOracles() external returns(bool);
+    function vote(address candidate) external returns(bool);
+    function unvote(address candidate) external returns(bool);
+}
+
+contract DPOS is DPOSInterface {
 
     struct Votes {
         bool initialized;
@@ -43,8 +49,15 @@ contract DPOS {
         _;
     }
 
+    event BecameCandidateToOracles(address candidate);
+    event Vote(address voter, address candidate);
+    event Unvote(address voter, address candidate);
+    event UpdateOreaclesList(address newOracle, address oldOracle);
+
     function becameCandidateToOracles() external notCandidateToOracles returns(bool) {
         votes[msg.sender] = Votes(true, 0);
+
+        emit BecameCandidateToOracles(msg.sender);
         return true;
     }
 
@@ -54,6 +67,8 @@ contract DPOS {
         votes[candidate].users[msg.sender] = true;
 
         if (!isValidOracle(msg.sender)) updateOreaclesList(candidate);
+
+        emit Vote(msg.sender, candidate);
         return true;
     }
 
@@ -63,6 +78,8 @@ contract DPOS {
         votes[candidate].users[msg.sender] = false;
 
         updateOreaclesList(candidate);
+
+        emit Unvote(msg.sender, candidate);
         return true;
     }
 
@@ -70,8 +87,9 @@ contract DPOS {
         uint worstId = getWorstOracle();
         if (votes[oracles[worstId]].count < votes[updatedAddress].count) {
             oracles[worstId] = updatedAddress;
+            emit UpdateOreaclesList(updatedAddress, oracles[worstId]);
         }
-        
+
         return true;
     }
 
