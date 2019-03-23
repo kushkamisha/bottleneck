@@ -35,12 +35,12 @@ contract DPOS is DPOSInterface {
     }
 
     modifier notCandidateToOracles {
-        require(!votes[msg.sender].initialized, "You're already candidate to oracles");
+        require(!votes[msg.sender].initialized, "This address is already candidate to oracles");
         _;
     }
 
     modifier isCandidateToOracles(address _address) {
-        require(votes[_address].initialized, "You're not candidate to oracles");
+        require(votes[_address].initialized, "This address is not candidate to oracles");
         _;
     }
 
@@ -49,15 +49,15 @@ contract DPOS is DPOSInterface {
         _;
     }
 
-    event BecameCandidateToOracles(address candidate);
+    event BecomeCandidateToOracles(address candidate);
     event Vote(address voter, address candidate);
     event Unvote(address voter, address candidate);
     event UpdateOreaclesList(address newOracle, address oldOracle);
 
-    function becameCandidateToOracles() external notCandidateToOracles returns(bool) {
+    function becomeCandidateToOracles() external notCandidateToOracles returns(bool) {
         votes[msg.sender] = Votes(true, 0);
 
-        emit BecameCandidateToOracles(msg.sender);
+        emit BecomeCandidateToOracles(msg.sender);
         return true;
     }
 
