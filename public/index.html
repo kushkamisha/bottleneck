@@ -47,13 +47,33 @@
         <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <td></td>
-                    <td>
+                    <td>Become a candidate</td>
+                    <td id="becomeCandidateStatus"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
                         <a href="#" id="becomeCandidate" class="btn btn-primary">Check</a>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <h3>vote()</h3>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>Vote for candidate</td>
+                    <td id="voteForCandidate"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="text" id="voteAddress" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
+                        <a href="#" id="vote" class="btn btn-primary">Vote</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
     </div>
 
     <script src="javascript/main.js"></script>
