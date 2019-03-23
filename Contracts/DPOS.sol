@@ -38,8 +38,8 @@ contract DPOS {
         _;
     }
 
-    modifier isValidateOracle(address _address) {
-        require(checkOracle(_address), "Already oracle");
+    modifier isValidateOracle {
+        require(checkOracle(msg.sender), "Already oracle");
         _;
     }
 
