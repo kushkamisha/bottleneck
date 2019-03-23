@@ -4,16 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <title>Flight Insurance</title>
 </head>
-<body>
-    <h3>Global flight insurance</h3>
-    <p>
-        Current string: <span id="welcomeString"></span><br>
-        New string: <input type="text" id="newString" value="Misha" /><br>
-        <button value="changeString">Change string</button>
-    </p>
+<body class="container" style="padding-top: 3em">
+    <h1>Global flight insurance</h1>
+    <hr>
+    <h3>oraclesCount()</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>Number of oracles:</td>
+                    <td id="oracles"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>votes()</h3>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>Want to be oracle</td>
+                    <td id="wantToBeOracle"></td>
+                </tr>
+                <tr>
+                    <td>Votes for address</td>
+                    <td id="votesForAddress"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="text" id="votesAddress" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
+                        <a href="#" id="votes" class="btn btn-primary">Check</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>becomeCandidateToOracles()</h3>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td>
+                        <a href="#" id="becomeCandidate" class="btn btn-primary">Check</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <script src="javascript/main.js"></script>
 </body>

@@ -13,76 +13,102 @@ $(document).ready(function () {
     }
 
     loadContract()
-    welcomeString()
+    oraclesCount()
 })
 
 function loadContract() {
-    const abi = JSON.parse(`[
-	{
-    "constant": false,
-    "inputs": [
-      {
-        "name": "newWelcomeString",
-        "type": "string"
-      }
-    ],
-    "name": "setWelcomeString",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "welcomeString",
-    "outputs": [
-      {
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  }
-]`)
+    const abi = JSON.parse(`[{"constant":true,"inputs":[{"name":"","type":"uint256"}],
+        "name":"oracles","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":
+        "view","type":"function"},{"constant":false,"inputs":[{"name":"candidate","type":"address"}]
+        ,"name":"vote","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":
+        "nonpayable","type":"function"},{"constant":false,"inputs":[],
+        "name":"becameCandidateToOracles","outputs":[{"name":"","type":"bool"}],"payable":false,
+        "stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":
+        "oraclesCount","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":
+        "view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],
+        "name":"voting","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":
+        "view","type":"function"},{"constant":false,"inputs":[{"name":"candidate","type":"address"}]
+        ,"name":"unvote","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":
+        "nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],
+        "name":"votes","outputs":[{"name":"initialized","type":"bool"},{"name":"count","type":
+        "uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],
+        "payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,
+        "inputs":[{"indexed":false,"name":"candidate","type":"address"}],"name":
+        "BecameCandidateToOracles","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,
+        "name":"voter","type":"address"},{"indexed":false,"name":"candidate","type":"address"}],
+        "name":"Vote","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"voter",
+        "type":"address"},{"indexed":false,"name":"candidate","type":"address"}],"name":"Unvote",
+        "type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newOracle","type":
+        "address"},{"indexed":false,"name":"oldOracle","type":"address"}],"name":
+        "UpdateOreaclesList","type":"event"}]`)
     const WellcomeContract = window.web3.eth.contract(abi)
-    window.contractInstance = WellcomeContract.at('0xC108FA335EEc79056c26b9B2A39Fe59fEc6e4D2A')
+    window.contractInstance = WellcomeContract.at('0x0013744908750cdd9e30b22e94377909116ab2b4')
 }
 
-$(':button[value="changeString"]').click(function async() {
-    const newString = $('#newString').val()
+$('#votes').click(function () {
+    const address = $('#votesAddress').val()
+    contractInstance.votes.call(address, (err, votes) => {
+        if (err) console.error({ err })
+        console.log({ votes })
+        $('#wantToBeOracle').text(votes[0])
+        $('#votesForAddress').text(votes[1].toNumber())
+    })
+})
 
-    // contractInstance.setWelcomeString(newString, { from: '0x4D07e28E9EE6DC715b98f589169d7927239d7318' }, function () {
-    //     console.log('yey')
-    // });
-
-    // contractInstance.setWelcomeString(newString, { from: '0x4D07e28E9EE6DC715b98f589169d7927239d7318' }, function(err, receipt) {
-    //     if (err) console.error({ err })
-    //     console.log({ receipt })
-    // })
-
+$('#becomeCandidate').click(function () {
     getAccount()
-        .then((account, err) => {
+        .then((address, err) => {
             if (err) console.error({ err })
-            contractInstance.setWelcomeString(newString, { from: account }, function(err, receipt) {
+            contractInstance.becameCandidateToOracles({ from: address }, function(err, receipt) {
                 if (err) console.error({ err })
                 console.log({ receipt })
+                handleEvent()
             })
         })
 })
 
-function welcomeString() {
-    contractInstance.welcomeString.call((err, res) => {
-        if (err) console.log({ err })
-        $("#welcomeString").text(res)
+// getAccount()
+//     .then((account, err) => {
+//         if (err) console.error({ err })
+//         contractInstance.setWelcomeString(newString, { from: account }, function(err, receipt) {
+//             if (err) console.error({ err })
+//             console.log({ receipt })
+//         })
+//     })
+
+function handleEvent() {
+    if (web3 && contractInstance) {
+        const BecameCandidateToOracles = contractInstance.BecameCandidateToOracles()
+        BecameCandidateToOracles.watch(function (err, res) {
+
+            if (err) console.error({ err })
+
+            //         Callback return
+            //         Object - An event object as follows:
+
+            //         address: String, 32 Bytes - address from which this log originated.
+            //         args: Object - The arguments coming from the event.
+            //         blockHash: String, 32 Bytes - hash of the block where this log was in. null when its pending.
+            //         blockNumber: Number - the block number where this log was in. null when its pending.
+            //         logIndex: Number - integer of the log index position in the block.
+            //         event: String - The event name.
+            //         removed: bool - indicate if the transaction this event was created from was removed from the blockchain (due to orphaned block) or never get to it (due to rejected transaction).
+            //         transactionIndex: Number - integer of the transactions index position log was created from.
+            //         transactionHash: String, 32 Bytes - hash of the transactions this log was created from.
+
+            // event arguments cointained in result.args object
+            const { candidateAddress } = res.args
+            console.log({ res })
+            // new data have arrived. it is good idea to udpate data & UI
+            // addNewDataToStateAndUpdateUI()
+        })
+    }
+}
+
+function oraclesCount() {
+    contractInstance.oraclesCount.call((err, count) => {
+        if (err) console.error({ err })
+        $('#oracles').text(count)
     })
 }
 
@@ -91,14 +117,6 @@ function getAccount() {
         web3.eth.getAccounts(function (err, accounts) {
             if (err) reject(err)
             resolve(accounts[0])
-                // web3.eth.getBalance(accounts[0], function (err, balance) {
-                //     if (!err) {
-                //         accounts[0]
-                //         // balance.toNumber() / 1000000000000000000
-                //     } else {
-                //         console.error(err);
-                //     }
-                // });
         })
     })
 }
