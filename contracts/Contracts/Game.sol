@@ -21,6 +21,7 @@ contract Game is Platform, GameInterface {
         uint timestamp;
         uint16 mCoeficient; // coeficient in milli (10e3)
         uint8 range;
+        bytes32 hashOfDescription;
 
         uint8 votesForAction;
 
