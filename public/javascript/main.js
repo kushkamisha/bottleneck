@@ -2,7 +2,7 @@
  * @see https://ylv.io/10-web3-metamask-use-cases-ever-blockchain-developer-needs/
  */
 
-$(document).ready(function () {
+$(document).ready(function async () {
     if (typeof web3 !== 'undefined') {
         // Use Mist/MetaMask's provider
         window.web3 = new Web3(web3.currentProvider)
@@ -47,6 +47,10 @@ function loadContract() {
 			{
 				"name": "_range",
 				"type": "uint8"
+			},
+			{
+				"name": "_hashOfDescription",
+				"type": "bytes32"
 			}
 		],
 		"name": "createAction",
@@ -114,7 +118,7 @@ function loadContract() {
 				"type": "uint256"
 			}
 		],
-		"name": "submitEvent",
+		"name": "submitResult",
 		"outputs": [
 			{
 				"name": "",
@@ -171,7 +175,7 @@ function loadContract() {
 				"type": "uint256"
 			}
 		],
-		"name": "withdrawOraclesReward",
+		"name": "withdrawOracleReward",
 		"outputs": [
 			{
 				"name": "",
@@ -252,7 +256,7 @@ function loadContract() {
 				"type": "uint256"
 			}
 		],
-		"name": "SubmitEvent",
+		"name": "SubmitResult",
 		"type": "event"
 	},
 	{
@@ -303,7 +307,7 @@ function loadContract() {
 				"type": "uint256"
 			}
 		],
-		"name": "WithdrawOraclesReward",
+		"name": "WithdrawOracleReward",
 		"type": "event"
 	},
 	{
@@ -390,6 +394,10 @@ function loadContract() {
 			{
 				"name": "range",
 				"type": "uint8"
+			},
+			{
+				"name": "hashOfDescription",
+				"type": "bytes32"
 			},
 			{
 				"name": "votesForAction",
@@ -532,7 +540,7 @@ function loadContract() {
 	}
 ]`)
     const WellcomeContract = window.web3.eth.contract(abi)
-    window.contractInstance = WellcomeContract.at('0x6c0e1012d70ea090214a0907130834d4e7f8e2c8')
+    window.contractInstance = WellcomeContract.at('0x114A793AD7b3d6471871bdA194967e07d5d513F9')
 }
 
 $('#oraclesButton').click(function () {
@@ -551,14 +559,6 @@ $('#actionsButton').click(function () {
     })
 })
 
-$('#votingButton').click(function () {
-    const address = $('#votingAddress').val()
-    contractInstance.votedForCandidate.call(address, (err, voted) => {
-        if (err) console.error({ err })
-        $('#votingResult').text(voted)
-    })
-})
-
 $('#votes').click(function () {
     const address = $('#votesAddress').val()
     contractInstance.votes.call(address, (err, votes) => {
@@ -566,6 +566,25 @@ $('#votes').click(function () {
         // console.log({ votes })
         $('#wantToBeOracle').text(votes[0])
         $('#votesForAddress').text(votes[1].toNumber())
+    })
+})
+
+$('#playerBetButton').click(function () {
+    const id = $('#playerBetActionsId').val()
+    const address = $('#playerBetActionsAddress').val()
+    contractInstance.votes.call([id, address], (err, votes) => {
+        if (err) console.error({ err })
+        // console.log({ votes })
+        $('#wantToBeOracle').text(votes[0])
+        $('#votesForAddress').text(votes[1].toNumber())
+    })
+})
+
+$('#oraclesBalanceButton').click(function () {
+    const id = $('#oraclesBalanceId').val()
+    contractInstance.oraclesBalance.call(id, (err, balance) => {
+        if (err) console.error({ err })
+        $('#oraclesBalanceResult').text(balance.toNumber() / 1e18 + ' Ether')
     })
 })
 
@@ -604,6 +623,14 @@ $('#vote').click(function () {
         })
 })
 
+$('#votingButton').click(function () {
+    const address = $('#votingAddress').val()
+    contractInstance.votedForCandidate.call(address, (err, voted) => {
+        if (err) console.error({ err })
+        $('#votingResult').text(voted)
+    })
+})
+
 $('#unvoteButton').click(function () {
     const forAddress = $('#unvoteAddress').val()
     getAccount()
@@ -617,6 +644,96 @@ $('#unvoteButton').click(function () {
                         if (err) console.error({ err })
                         console.log({ event })
                         $('#unvoteStatus').text('success')
+                    })
+            })
+        })
+})
+
+$('#createActionButton').click(function () {
+    const description = $('#createActionDescription').val()
+    const timestamp = $('#createActionTimestamp').val()
+    const coefficient = $('#createActionCoefficient').val()
+    const range = $('#createActionRange').val()
+
+    const data = {
+        description
+    }
+    hashDescription(data, timestamp, coefficient, range)
+})
+
+$('#submitActionButton').click(function () {
+    const id = $('#submitActionId').val()
+    getAccount()
+        .then((address, err) => {
+            if (err) console.error({ err })
+            contractInstance.submitAction(id, { from: address }, function (err, receipt) {
+                if (err) console.error({ err })
+                // console.log({ receipt })
+                handleEvent('SubmitAction')
+                    .then((event, err) => {
+                        if (err) console.error({ err })
+                        console.log({ event })
+                        $('#submitActionResult').text('success')
+                    })
+            })
+        })
+})
+
+$('#makeBetButton').click(function () {
+    const bet = $('#makeBetBet').val()
+    const actionId = $('#makeBetActionId').val()
+    const value = $('#makeBetValue').val()
+
+    getAccount()
+        .then((address, err) => {
+            if (err) console.error({ err })
+            contractInstance.makeBet(bet, actionId, { from: address, value }, function (err, receipt) {
+                if (err) console.error({ err })
+                // console.log({ receipt })
+                handleEvent('MakeBet')
+                    .then((event, err) => {
+                        if (err) console.error({ err })
+                        console.log({ event })
+                        $('#makeBetResult').text('success')
+                    })
+            })
+        })
+})
+
+$('#submitResultButton').click(function () {
+    const resultInput = $('#submitResultResultInput').val()
+    const id = $('#submitResultActionId').val()
+
+    getAccount()
+        .then((address, err) => {
+            if (err) console.error({ err })
+            contractInstance.submitResult(resultInput, id, { from: address }, function (err, receipt) {
+                if (err) console.error({ err })
+                // console.log({ receipt })
+                handleEvent('SubmitResult')
+                    .then((event, err) => {
+                        if (err) console.error({ err })
+                        console.log({ event })
+                        $('#submitResultResult').text('success')
+                    })
+            })
+        })
+})
+
+$('#WithdrawOracleButton').click(function () {
+    const amount = $('#WithdrawOracleAmount').val()
+
+    getAccount()
+        .then((address, err) => {
+            if (err) console.error({ err })
+            contractInstance.withdrawOracleReward(amount, { from: address }, function (err, receipt) {
+                if (err) console.error({ err })
+                // console.log({ receipt })
+                handleEvent('WithdrawOracleReward')
+                    .then((event, err) => {
+                        if (err) console.error({ err })
+                        console.log({ event })
+                        $('#WithdrawOracleResult').text('success')
                     })
             })
         })
@@ -678,5 +795,43 @@ function getAccount() {
             if (err) reject(err)
             resolve(accounts[0])
         })
+    })
+}
+
+function hashDescription(data, timestamp, coefficient, range) {
+    $.ajax({
+        url: '/hash',
+        // type: 'POST',
+        // dataType: 'json',
+        data,
+        // contentType: 'json',
+
+        success: function (hash) {
+            hash = '0x' + hash
+            timestamp = parseInt(timestamp)
+            coefficient = parseInt(coefficient)
+            range = parseInt(range)
+            // hash = parseInt(hash, 16)
+
+            console.log({ timestamp, coefficient, range, hash })
+            getAccount()
+                .then((address, err) => {
+                    if (err) console.error({ err })
+                    contractInstance.createAction(timestamp, coefficient, range, hash, { from: address }, function (err, receipt) {
+                        if (err) console.error({ err })
+                        // console.log({ receipt })
+                        handleEvent('CreateAction')
+                            .then((event, err) => {
+                                if (err) console.error({ err })
+                                console.log({ event })
+                                $('#createActionResult').text('success')
+                            })
+                    })
+                })
+        },
+
+        error: function (err) {
+            console.error({ err })
+        },
     })
 }

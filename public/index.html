@@ -69,22 +69,6 @@
         <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <td>Get player bet by address and actionId</td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        <input type="text" id="playerBetActionsId" size="5" value="0" />
-                        <input type="text" id="playerBetAddress" size="48" value="0x0" />
-                        <span id="playerBetButton" class="btn btn-success">Get player bet</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>votedForCandidate()</h3>
-        <table class="table table-bordered">
-            <tbody>
-                <tr>
                     <td>Has address voted for candidate?</td>
                     <td id="votingResult"></td>
                 </tr>
@@ -97,7 +81,21 @@
             </tbody>
         </table>
 
-        <h3>votes()</h3>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>Oracle balance</td>
+                    <td id="oraclesBalanceResult"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="text" id="oraclesBalanceId" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
+                        <span id="oraclesBalanceButton" class="btn btn-success">Check status</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -124,16 +122,16 @@
 
         <h2 align="center" style="padding: 1em 0"><span class="badge badge-pill badge-primary px-5">Setters</span></h2>
 
-        <h3>createAction()</h3>
         <table class="table table-bordered">
             <tbody>
                 <tr>
                     <td>Create Action</td>
+                    <td id="createActionResult"></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center">
                         <input type="text" id="createActionTimestamp" size="10" value="1553422694" />
-                        <input type="text" id="createActionCoeficient" size="5" value="100" />
+                        <input type="text" id="createActionCoefficient" size="5" value="100" />
                         <input type="text" id="createActionRange" size="4" value="100" />
                         <textarea id="createActionDescription">Some description</textarea>
                         <span id="createActionButton" class="btn btn-primary">Create action</span>
@@ -142,11 +140,11 @@
             </tbody>
         </table>
 
-        <h3>submitAction()</h3>
         <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <td>Submit Action</td>
+                    <td>Validate action</td>
+                    <td id="submitActionResult"></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center">
@@ -162,9 +160,11 @@
             <tbody>
                 <tr>
                     <td>Make bet</td>
+                    <td id="makeBetResult"></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center">
+                        <input type="text" id="makeBetValue" size="20" value="0" /> wei <br>
                         <input type="text" id="makeBetBet" size="5" value="0" />
                         <input type="text" id="makeBetActionId" size="5" value="0" />
                         <span id="makeBetButton" class="btn btn-primary">Make bet</span>
@@ -178,10 +178,11 @@
             <tbody>
                 <tr>
                     <td>Submit result</td>
+                    <td id="submitResultResult"></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center">
-                        <input type="text" id="submitResultResult" size="5" value="0" />
+                        <input type="text" id="submitResultResultInput" size="5" value="0" />
                         <input type="text" id="submitResultActionId" size="5" value="0" />
                         <span id="submitResultButton" class="btn btn-primary">Submit result</span>
                     </td>
@@ -194,17 +195,17 @@
             <tbody>
                 <tr>
                     <td>Withdraw oracle reward</td>
+                    <td id="WithdrawOracleResult"></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center">
-                        <input type="text" id="withdrawRewardAmount" size="40" value="0" />
-                        <span id="withdrawRewardButton" class="btn btn-primary">Withdraw oracle reward</span>
+                        <input type="text" id="WithdrawOracleAmount" size="40" value="0" />
+                        <span id="WithdrawOracleButton" class="btn btn-primary">Withdraw oracle reward</span>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <h3>becomeCandidateToOracles()</h3>
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -219,7 +220,6 @@
             </tbody>
         </table>
 
-        <h3>vote()</h3>
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -235,7 +235,6 @@
             </tbody>
         </table>
 
-        <h3>unvote()</h3>
         <table class="table table-bordered">
             <tbody>
                 <tr>
