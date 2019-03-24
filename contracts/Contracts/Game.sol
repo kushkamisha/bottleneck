@@ -3,7 +3,7 @@ pragma solidity 0.5.6;
 import "browser/Platform.sol";
 
 interface GameInterface {
-    function createAction(uint _timestamp, uint16 _mCoeficient, uint8 _range) external returns(uint256);
+    function createAction(uint _timestamp, uint16 _mCoeficient, uint8 _range, bytes32 _hashOfDescription) external returns(uint256);
     function submitAction(uint actionId) external returns(bool);
     function makeBet(uint8 bet, uint actionId) external payable returns(bool);
     function submitEvent(uint8 result, uint actionId) external returns(bool);
