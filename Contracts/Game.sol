@@ -21,13 +21,15 @@ contract Game is Platform, GameInterface {
         uint timestamp;
         uint16 mCoeficient; // coeficient in milli (10e3)
         uint8 range;
-        
+
         uint8 votesForAction;
-        
+
         mapping(address => bool) isVotedForAction;
         mapping(address => bool) isVotedForResult;
-        
-        Bet[] bets;
+
+        mapping(uint => Bet) bets;
+        uint playersCount;
+
         mapping(uint8 => uint8) results;
         uint8 result;
     }
@@ -65,7 +67,7 @@ contract Game is Platform, GameInterface {
     event GetPlayerReward(address player, uint amount);
 
     function createAction(uint _timestamp, uint16 _mCoeficient, uint8 _range) external isOracle returns(uint256) {
-        actions.push(Action(_timestamp, _mCoeficient, _range, 0, new Bet[](0), 0));
+        actions.push(Action(_timestamp, _mCoeficient, _range, 0, 1, 0));
 
         emit CreateAction(actions.length - 1);
         return (actions.length - 1);
@@ -80,7 +82,7 @@ contract Game is Platform, GameInterface {
     }
 
     function makeBet(uint8 bet, uint actionId) external payable submitedAction(actionId) isBetInRange() returns(bool) {
-        actions[actionId].bets.push(Bet(msg.sender, bet, msg.value));
+        actions[actionId].bets[actions[actionId].playersCount] = Bet(msg.sender, bet, msg.value);
         getOraclesReward(msg.value);
 
         emit MakeBet(bet, msg.sender, actionId);
@@ -111,7 +113,7 @@ contract Game is Platform, GameInterface {
     }
 
     function getPlayersReward(uint actionId, uint8 result) private returns(bool) {
-        for (uint8 i = 0; i < actions[actionId].bets.length; i++) {
+        for (uint8 i = 0; i < actions[actionId].playersCount; i++) {
             if (actions[actionId].bets[i].bet == result) {
                 uint winAmount = actions[actionId].bets[i].amount.mul(uint(actions[actionId].mCoeficient).div(1000));
                 actions[actionId].bets[i].wallet.transfer(winAmount);
