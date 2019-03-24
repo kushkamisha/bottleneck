@@ -67,8 +67,8 @@ contract Game is Platform, GameInterface {
     event GetOracleReward(address oracle, uint amount);
     event GetPlayerReward(address player, uint amount);
 
-    function createAction(uint _timestamp, uint16 _mCoeficient, uint8 _range) external isOracle returns(uint256) {
-        actions.push(Action(_timestamp, _mCoeficient, _range, 0, 1, 0));
+    function createAction(uint _timestamp, uint16 _mCoeficient, uint8 _range, bytes32 _hashOfDescription) external isOracle returns(uint256) {
+        actions.push(Action(_timestamp, _mCoeficient, _range, _hashOfDescription, 0, 1, 0));
 
         emit CreateAction(actions.length - 1);
         return (actions.length - 1);
