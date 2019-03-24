@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <title>DPOS Panel</title>
+</head>
+
+<body class="p-3">
+  <h1 class="text-center">DPOS Panel</h1>
+
+  <div class="row">
+    <div class="col border-right">
+      <h2 class="text-center">Getters</h2>
+
+      <h3>Constants</h3>
+      <table class="table table-bordered">
+        <tr>
+          <td>Number of oracles:</td>
+          <td id="oracles"></td>
+        </tr>
+        <tr>
+          <td>Minimum bet:</td>
+          <td id="minbet"></td>
+        </tr>
+        <tr>
+          <td>Maximum bet:</td>
+          <td id="maxbet"></td>
+        </tr>
+      </table>
+
+
+      <h3>Oracles</h3>
+      <span class="px-3">Id:</span>
+      <input type="text" id="oraclesAddress" size="5" value="0" /><br>
+
+      <span id="oraclesButton" class="btn btn-success my-3">Get oracle</span>
+      <table class="table table-bordered">
+        <tr>
+          <td>Oracle address:</td>
+          <td id="oraclesResult"></td>
+        </tr>
+      </table>
+
+
+      <h3>Actions</h3>
+      <span class="px-3">Id:</span>
+      <input type="text" id="actionsId" size="5" value="0" /><br>
+
+      <span id="actionsButton" class="btn btn-success my-3">Get action</span>
+      <table class="table table-bordered">
+        <tr>
+          <td>Action params:</td>
+          <td id="actionsResult"></td>
+        </tr>
+      </table>
+
+
+      <h3>Voted</h3>
+      <span class="px-3">Address:</span>
+      <input type="text" id="votingAddress" size="48" value="0x0" /><br>
+
+      <span id="votingButton" class="btn btn-success my-3">Check status</span>
+      <table class="table table-bordered">
+        <tr>
+          <td>Is anleady voted:</td>
+          <td id="votingResult"></td>
+        </tr>
+      </table>
+
+
+      <h3>Votes</h3>
+      <span class="px-3">Address:</span>
+      <input type="text" id="votesAddress" size="48" value="0x0" /><br>
+
+      <span id="votes" class="btn btn-success my-3">Check status</span>
+      <table class="table table-bordered">
+        <tr>
+          <td>Want to be oracle:</td>
+          <td id="wantToBeOracle"></td>
+        </tr>
+        <tr>
+          <td>Votes count for address:</td>
+          <td id="votesForAddress"></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="col">
+      <h2 class="text-center">Setters</h2>
+
+      <h3>Create action</h3>
+      <div class="row">
+        <div class="col-3">
+          <div class="px-3">Timestamp:</div>
+          <div class="px-3">mCoeficient:</div>
+          <div class="px-3">Range:</div>
+          <div class="px-3">Description:</div>
+        </div>
+        <div class="col">
+          <input type="text" id="createActionTimestamp" size="10" value="1553422694" style="width: 110px" /><br>
+          <input type="text" id="createActionCoeficient" size="5" value="1000" /><br>
+          <input type="text" id="createActionRange" size="4" value="5" /><br>
+          <textarea id="createActionDescription" style="width: 400px">Some game</textarea>
+        </div>
+      </div>
+
+      <div id="createActionButton" class="btn btn-primary my-3">Create action</div>
+      <table class="table table-bordered">
+        <tr>
+          <td>Result:</td>
+          <td id="createActionResult"></td>
+        </tr>
+      </table>
+
+
+      <h3>Submit action</h3>
+      <div class="row">
+        <div class="col-3">
+          <div class="px-3">Action id:</div>
+        </div>
+        <div class="col">
+          <input type="text" id="submitActionId" size="5" value="0" /><br>
+        </div>
+      </div>
+
+      <div id="submitActionButton" class="btn btn-primary my-3">Submit action</div>
+      <table class="table table-bordered">
+        <tr>
+          <td>Result:</td>
+          <td id="submitActionResult"></td>
+        </tr>
+      </table>
+
+
+      <h3>Make bet</h3>
+      <div class="row">
+        <div class="col-3">
+          <div class="px-3">Action id:</div>
+          <div class="px-3">Bet:</div>
+          <div class="px-3">Bet value:</div>
+        </div>
+        <div class="col">
+          <input type="text" id="makeBetBet" size="5" value="0" /><br>
+          <input type="text" id="makeBetActionId" size="5" value="0" /><br>
+          <input type="text" id="makeBetValue" size="10" value="0" /><br>
+        </div>
+      </div>
+
+      <div id="makeBetButton" class="btn btn-primary my-3">Make bet</div>
+      <table class="table table-bordered">
+        <tr>
+          <td>Result:</td>
+          <td id="makeBetResult"></td>
+        </tr>
+      </table>
+
+
+      <h3>Submit result</h3>
+      <div class="row">
+        <div class="col-3">
+          <div class="px-3">Action id:</div>
+          <div class="px-3">Result:</div>
+        </div>
+        <div class="col">
+          <input type="text" id="submitResultResultInput" size="5" value="0" /><br>
+          <input type="text" id="submitResultActionId" size="5" value="0" /><br>
+        </div>
+      </div>
+
+      <div id="submitResultButton" class="btn btn-primary my-3">Submit result</div>
+      <table class="table table-bordered">
+        <tr>
+          <td>Result:</td>
+          <td id="submitResultResult"></td>
+        </tr>
+      </table>
+
+
+      <h3>Withdraw oracle reward</h3>
+      <div class="row">
+        <div class="col-3">
+          <div class="px-3">Amount:</div>
+        </div>
+        <div class="col">
+          <input type="text" id="withdrawRewardAmount" size="40" value="0" /><br>
+        </div>
+      </div>
+
+      <div id="withdrawRewardButton" class="btn btn-primary my-3">Submit action</div>
+      <table class="table table-bordered">
+        <tr>
+          <td>Result:</td>
+          <td id="withdrawRewardResult"></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+
+  <div class="table-responsive">
+
+    <table class="table table-bordered">
+      <tr>
+        <td>
+
+          <h3>becomeCandidateToOracles()</h3>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td>Become a candidate</td>
+                <td id="becomeCandidateStatus"></td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <span id="becomeCandidate" class="btn btn-primary">Do it!</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>vote()</h3>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td>Vote for candidate</td>
+                <td id="voteForCandidate"></td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input type="text" id="voteAddress" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
+                  <span id="vote" class="btn btn-primary">Vote</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>unvote()</h3>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td>Remove your vote for candidate</td>
+                <td id="unvoteStatus"></td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input type="text" id="unvoteAddress" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
+                  <span id="unvoteButton" class="btn btn-primary">Unvote</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+  </div>
+
+  <script src="javascript/main.js"></script>
+</body>
+
+</html>
