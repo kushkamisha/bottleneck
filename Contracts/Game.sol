@@ -103,8 +103,8 @@ contract Game is Platform, GameInterface {
     function getOraclesReward(uint totalReward) private returns(bool) {
         uint oracleRevard = totalReward.div(oraclesCount).mul(mRevardMultiplier).div(1000);
         for (uint8 i = 0; i < oraclesCount; i++) {
-            oraclesBalance[oracles[i]] = oraclesBalance[oracles[i]].add(oracleRevard);
-            emit GetOracleReward(oracles[i], oracleRevard);
+            oraclesBalance[oraclesList[i]] = oraclesBalance[oraclesList[i]].add(oracleRevard);
+            emit GetOracleReward(oraclesList[i], oracleRevard);
         }
 
         return true;

@@ -18,18 +18,18 @@ contract DPOS is DPOSInterface {
         mapping(address => bool) users;
     }
 
-    mapping (address => bool) public voted;
+    mapping (address => bool) public votedForCandidate;
     mapping (address => Votes) public votes;
 
     uint8 constant public oraclesCount = 3;
-    address[] public oracles;
+    address[] public oraclesList;
 
     constructor() public {
-        oracles = new address[](oraclesCount);
+        oraclesList = new address[](oraclesCount);
     }
 
     modifier notVoted {
-        require(!voted[msg.sender], "You've already voted");
+        require(!votedForCandidate[msg.sender], "You've already voted");
         _;
     }
 
@@ -66,7 +66,7 @@ contract DPOS is DPOSInterface {
     }
 
     function vote(address candidate) external notVoted isCandidateToOracles(candidate) returns(bool) {
-        voted[msg.sender] = true;
+        votedForCandidate[msg.sender] = true;
         votes[candidate].count = votes[candidate].count.add(1);
         votes[candidate].users[msg.sender] = true;
 
@@ -77,7 +77,7 @@ contract DPOS is DPOSInterface {
     }
 
     function unvote(address candidate) external isCandidateToOracles(candidate) haveVoted(candidate) returns(bool) {
-        voted[msg.sender] = false;
+        votedForCandidate[msg.sender] = false;
         votes[candidate].count = votes[candidate].count.sub(1);
         votes[candidate].users[msg.sender] = false;
 
@@ -89,20 +89,20 @@ contract DPOS is DPOSInterface {
 
     function updateOreaclesList(address updatedAddress) private returns(bool) {
         uint worstId = getWorstOracle();
-        if (votes[oracles[worstId]].count < votes[updatedAddress].count) {
-            oracles[worstId] = updatedAddress;
-            emit UpdateOreaclesList(updatedAddress, oracles[worstId]);
+        if (votes[oraclesList[worstId]].count < votes[updatedAddress].count) {
+            oraclesList[worstId] = updatedAddress;
+            emit UpdateOreaclesList(updatedAddress, oraclesList[worstId]);
         }
 
         return true;
     }
 
-    function getWorstOracle() private view returns (uint id) {
+    function getWorstOracle() private view returns(uint id) {
         uint worstId = 0;
-        uint worstResult = votes[oracles[worstId]].count;
+        uint worstResult = votes[oraclesList[worstId]].count;
 
         for (uint i = 1; i < oraclesCount; i++) {
-            uint oracleVotesCount = votes[oracles[i]].count;
+            uint oracleVotesCount = votes[oraclesList[i]].count;
             if (oracleVotesCount == 0) return i;
             
             if (oracleVotesCount < worstResult) {
@@ -116,7 +116,7 @@ contract DPOS is DPOSInterface {
 
     function isValidOracle(address oracle) private view returns(bool) {
         for (uint i = 0; i < oraclesCount; i++) {
-            if (oracles[i] == oracle) return true;
+            if (oraclesList[i] == oracle) return true;
         }
         return false;
     }
