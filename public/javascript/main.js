@@ -540,7 +540,7 @@ function loadContract() {
 	}
 ]`)
     const WellcomeContract = window.web3.eth.contract(abi)
-    window.contractInstance = WellcomeContract.at('0x114A793AD7b3d6471871bdA194967e07d5d513F9')
+    window.contractInstance = WellcomeContract.at('0x54041c72f5dA3899BA9d34596F14de460c840d06') // '0x114A793AD7b3d6471871bdA194967e07d5d513F9')
 }
 
 $('#oraclesButton').click(function () {
