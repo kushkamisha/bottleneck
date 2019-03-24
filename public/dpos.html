@@ -90,6 +90,21 @@
       </table>
     </div>
 
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <td>Oracle balance</td>
+          <td id="oraclesBalanceResult"></td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center">
+            <input type="text" id="oraclesBalanceId" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
+            <span id="oraclesBalanceButton" class="btn btn-success">Check status</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
     <div class="col">
       <h2 class="text-center">Setters</h2>
 
@@ -187,15 +202,15 @@
           <div class="px-3">Amount:</div>
         </div>
         <div class="col">
-          <input type="text" id="withdrawRewardAmount" size="40" value="0" /><br>
+          <input type="text" id="withdrawOracleAmount" size="40" value="0" /><br>
         </div>
       </div>
 
-      <div id="withdrawRewardButton" class="btn btn-primary my-3">Submit action</div>
+      <div id="withdrawOracleButton" class="btn btn-primary my-3">Submit action</div>
       <table class="table table-bordered">
         <tr>
           <td>Result:</td>
-          <td id="withdrawRewardResult"></td>
+          <td id="withdrawOracleResult"></td>
         </tr>
       </table>
     </div>

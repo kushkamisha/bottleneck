@@ -720,8 +720,8 @@ $('#submitResultButton').click(function () {
         })
 })
 
-$('#WithdrawOracleButton').click(function () {
-    const amount = $('#WithdrawOracleAmount').val()
+$('#withdrawOracleButton').click(function () {
+    const amount = $('#withdrawOracleAmount').val()
 
     getAccount()
         .then((address, err) => {
@@ -733,7 +733,7 @@ $('#WithdrawOracleButton').click(function () {
                     .then((event, err) => {
                         if (err) console.error({ err })
                         console.log({ event })
-                        $('#WithdrawOracleResult').text('success')
+                        $('#withdrawOracleResult').text('success')
                     })
             })
         })
