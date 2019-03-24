@@ -6,7 +6,7 @@ interface GameInterface {
     function createAction(uint _timestamp, uint16 _mCoeficient, uint8 _range, bytes32 _hashOfDescription) external returns(uint256);
     function submitAction(uint actionId) external returns(bool);
     function makeBet(uint8 bet, uint actionId) external payable returns(bool);
-    function submitEvent(uint8 result, uint actionId) external returns(bool);
+    function submitResult(uint8 result, uint actionId) external returns(bool);
 }
 
 contract Game is Platform, GameInterface {
@@ -63,7 +63,7 @@ contract Game is Platform, GameInterface {
     event CreateAction(uint actionId);
     event SubmitAction(address oracle, uint actionId);
     event MakeBet(uint8 bet, address player, uint actionId);
-    event SubmitEvent(uint8 result, address oracle, uint actionId);
+    event SubmitResult(uint8 result, address oracle, uint actionId);
     event GetOracleReward(address oracle, uint amount);
     event GetPlayerReward(address player, uint amount);
 
@@ -90,7 +90,7 @@ contract Game is Platform, GameInterface {
         return true;
     }
 
-    function submitEvent(uint8 result, uint actionId) external submitedAction(actionId) notVotedForResult(actionId) isOracle returns(bool) {
+    function submitResult(uint8 result, uint actionId) external submitedAction(actionId) notVotedForResult(actionId) isOracle returns(bool) {
         actions[actionId].isVotedForResult[msg.sender] = true;
         actions[actionId].results[result]++; 
         
@@ -99,7 +99,7 @@ contract Game is Platform, GameInterface {
             actions[actionId].result = actions[actionId].results[result];
         }
 
-        emit SubmitEvent(result, msg.sender, actionId);
+        emit SubmitResult(result, msg.sender, actionId);
         return true;
     }
 
