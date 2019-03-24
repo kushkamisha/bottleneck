@@ -3,7 +3,7 @@ pragma solidity 0.5.6;
 import "browser/SafeMath.sol";
 
 interface DPOSInterface {
-    function becameCandidateToOracles() external returns(bool);
+    function becomeCandidateToOracles() external returns(bool);
     function vote(address candidate) external returns(bool);
     function unvote(address candidate) external returns(bool);
 }

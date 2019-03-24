@@ -19,17 +19,23 @@
                 <td>
         <h2 align="center" style="padding: 1em 0"><span class="badge badge-pill badge-success px-5">Getters</span></h2>
 
-        <h3>oraclesCount()</h3>
         <table class="table table-bordered">
             <tbody>
                 <tr>
                     <td>Number of oracles:</td>
                     <td id="oracles"></td>
                 </tr>
+                <tr>
+                    <td>Minimum bet:</td>
+                    <td id="minbet"></td>
+                </tr>
+                <tr>
+                    <td>Maximum bet:</td>
+                    <td id="maxbet"></td>
+                </tr>
             </tbody>
         </table>
 
-        <h3>oracles()</h3>
         <table class="table table-bordered">
             <tbody>
                 <tr>
@@ -39,23 +45,38 @@
                 <tr>
                     <td colspan="2" align="center">
                         <input type="text" id="oraclesAddress" size="5" value="0" />
-                        <span id="oraclesButton" class="btn btn-success">Get oracles</span>
+                        <span id="oraclesButton" class="btn btn-success">Get oracle</span>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <h3>voting()</h3>
         <table class="table table-bordered">
             <tbody>
                 <tr>
-                    <td>Has address voted?</td>
+                    <td>Get available action by id</td>
+                    <td id="actionsResult"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="text" id="actionsId" size="5" value="0" />
+                        <span id="actionsButton" class="btn btn-success">Get oracle</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>votedForCandidate()</h3>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>Has address voted for candidate?</td>
                     <td id="votingResult"></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center">
                         <input type="text" id="votingAddress" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
-                        <span id="votingButton" class="btn btn-success">Get oracles</span>
+                        <span id="votingButton" class="btn btn-success">Check status</span>
                     </td>
                 </tr>
             </tbody>
@@ -97,7 +118,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <span id="becomeCandidate" class="btn btn-primary">Check</span>
+                        <span id="becomeCandidate" class="btn btn-primary">Do it!</span>
                     </td>
                 </tr>
             </tbody>
@@ -129,7 +150,7 @@
                 <tr>
                     <td colspan="2">
                         <input type="text" id="unvoteAddress" size="48" value="0x4D07e28E9EE6DC715b98f589169d7927239d7318" />
-                        <span id="unvoteButton" class="btn btn-primary">Vote</span>
+                        <span id="unvoteButton" class="btn btn-primary">Unvote</span>
                     </td>
                 </tr>
             </tbody>

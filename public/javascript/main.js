@@ -14,48 +14,546 @@ $(document).ready(function () {
 
     loadContract()
     oraclesCount()
+    loadBets()
 })
 
 function loadContract() {
-    const abi = JSON.parse(`[{"constant":true,"inputs":[{"name":"","type":"uint256"}],
-        "name":"oracles","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":
-        "view","type":"function"},{"constant":false,"inputs":[{"name":"candidate","type":"address"}]
-        ,"name":"vote","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":
-        "nonpayable","type":"function"},{"constant":false,"inputs":[],
-        "name":"becameCandidateToOracles","outputs":[{"name":"","type":"bool"}],"payable":false,
-        "stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":
-        "oraclesCount","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":
-        "view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],
-        "name":"voting","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":
-        "view","type":"function"},{"constant":false,"inputs":[{"name":"candidate","type":"address"}]
-        ,"name":"unvote","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":
-        "nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],
-        "name":"votes","outputs":[{"name":"initialized","type":"bool"},{"name":"count","type":
-        "uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],
-        "payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,
-        "inputs":[{"indexed":false,"name":"candidate","type":"address"}],"name":
-        "BecameCandidateToOracles","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,
-        "name":"voter","type":"address"},{"indexed":false,"name":"candidate","type":"address"}],
-        "name":"Vote","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"voter",
-        "type":"address"},{"indexed":false,"name":"candidate","type":"address"}],"name":"Unvote",
-        "type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newOracle","type":
-        "address"},{"indexed":false,"name":"oldOracle","type":"address"}],"name":
-        "UpdateOreaclesList","type":"event"}]`)
+    const abi = JSON.parse(`[
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "becomeCandidateToOracles",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_timestamp",
+				"type": "uint256"
+			},
+			{
+				"name": "_mCoeficient",
+				"type": "uint16"
+			},
+			{
+				"name": "_range",
+				"type": "uint8"
+			}
+		],
+		"name": "createAction",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "bet",
+				"type": "uint8"
+			},
+			{
+				"name": "actionId",
+				"type": "uint256"
+			}
+		],
+		"name": "makeBet",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "actionId",
+				"type": "uint256"
+			}
+		],
+		"name": "submitAction",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "result",
+				"type": "uint8"
+			},
+			{
+				"name": "actionId",
+				"type": "uint256"
+			}
+		],
+		"name": "submitEvent",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "candidate",
+				"type": "address"
+			}
+		],
+		"name": "unvote",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "candidate",
+				"type": "address"
+			}
+		],
+		"name": "vote",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdrawOraclesReward",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "actionId",
+				"type": "uint256"
+			}
+		],
+		"name": "CreateAction",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "oracle",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "actionId",
+				"type": "uint256"
+			}
+		],
+		"name": "SubmitAction",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "bet",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "actionId",
+				"type": "uint256"
+			}
+		],
+		"name": "MakeBet",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "result",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
+				"name": "oracle",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "actionId",
+				"type": "uint256"
+			}
+		],
+		"name": "SubmitEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "oracle",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "GetOracleReward",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "GetPlayerReward",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "oracle",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "WithdrawOraclesReward",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "candidate",
+				"type": "address"
+			}
+		],
+		"name": "BecomeCandidateToOracles",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "voter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "candidate",
+				"type": "address"
+			}
+		],
+		"name": "Vote",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "voter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "candidate",
+				"type": "address"
+			}
+		],
+		"name": "Unvote",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "newOracle",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "oldOracle",
+				"type": "address"
+			}
+		],
+		"name": "UpdateOreaclesList",
+		"type": "event"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "actions",
+		"outputs": [
+			{
+				"name": "timestamp",
+				"type": "uint256"
+			},
+			{
+				"name": "mCoeficient",
+				"type": "uint16"
+			},
+			{
+				"name": "range",
+				"type": "uint8"
+			},
+			{
+				"name": "votesForAction",
+				"type": "uint8"
+			},
+			{
+				"name": "playersCount",
+				"type": "uint256"
+			},
+			{
+				"name": "result",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "maxBet",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "minBet",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "oraclesBalance",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "oraclesCount",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "oraclesList",
+		"outputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "votedForCandidate",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "votes",
+		"outputs": [
+			{
+				"name": "initialized",
+				"type": "bool"
+			},
+			{
+				"name": "count",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]`)
     const WellcomeContract = window.web3.eth.contract(abi)
-    window.contractInstance = WellcomeContract.at('0x0013744908750cdd9e30b22e94377909116ab2b4')
+    window.contractInstance = WellcomeContract.at('0x6c0e1012d70ea090214a0907130834d4e7f8e2c8')
 }
 
 $('#oraclesButton').click(function () {
-    const address = $('#oraclesAddress').val()
-    contractInstance.oracles.call(address, (err, oracle) => {
+    const id = $('#oraclesAddress').val()
+    contractInstance.oraclesList.call(id, (err, oracle) => {
         if (err) console.error({ err })
         $('#oraclesResult').text(oracle)
     })
 })
 
+$('#actionsButton').click(function () {
+    const id = $('#actionsId').val()
+    contractInstance.actions.call(id, (err, action) => {
+        if (err) console.error({ err })
+        $('#actionsResult').text(action)
+    })
+})
+
 $('#votingButton').click(function () {
     const address = $('#votingAddress').val()
-    contractInstance.voting.call(address, (err, voted) => {
+    contractInstance.votedForCandidate.call(address, (err, voted) => {
         if (err) console.error({ err })
         $('#votingResult').text(voted)
     })
@@ -75,10 +573,10 @@ $('#becomeCandidate').click(function () {
     getAccount()
         .then((address, err) => {
             if (err) console.error({ err })
-            contractInstance.becameCandidateToOracles({ from: address }, function(err, receipt) {
+            contractInstance.becomeCandidateToOracles({ from: address }, function(err, receipt) {
                 if (err) console.error({ err })
                 // console.log({ receipt })
-                handleEvent('BecameCandidateToOracles')
+                handleEvent('BecomeCandidateToOracles')
                     .then((event, err) => {
                         if (err) console.error({ err })
                         console.log({ event })
@@ -160,6 +658,17 @@ function oraclesCount() {
     contractInstance.oraclesCount.call((err, count) => {
         if (err) console.error({ err })
         $('#oracles').text(count)
+    })
+}
+
+function loadBets() {
+    contractInstance.minBet.call((err, minbet) => {
+        if (err) console.error({ err })
+        $('#minbet').text(minbet.toNumber() / 1e18 + ' Ether')
+    })
+    contractInstance.maxBet.call((err, maxbet) => {
+        if (err) console.error({ err })
+        $('#maxbet').text(maxbet.toNumber() / 1e18 + ' Ether')
     })
 }
 
